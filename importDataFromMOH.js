@@ -1,8 +1,6 @@
 function importDataFromMOH() {
-  
   var ss = SpreadsheetApp.openById("1YoK969RWaTBLCTN5ViMm9dXV8zJTEiiWC3E8SjHiNts");
   SpreadsheetApp.setActiveSpreadsheet(ss);
-  
   
   var date = new Date();
   date.setDate(date.getDate()-1);
@@ -14,15 +12,6 @@ function importDataFromMOH() {
   var firstCell = newDayData.getRange("A1"); // Please provide the row and column of your cell here 
   var mohLink = '"https://raw.githubusercontent.com/MoH-Malaysia/covid19-public/main/epidemic/clusters.csv"';
   firstCell.setFormula("=ImportData(" + mohLink + ")");
-
-  var lastRow = newDayData.getLastRow();
-  var range = newDayData.getRange('Q1');
-  newDayData.setActiveRange(range);
-  range.setValue("Date");
-
-  range = newDayData.getRange('Q2:Q' + lastRow);
-  newDayData.setActiveRange(range);
-  range.setValue(todaysDate);
 
   console.log("Created sheet for " + todaysDate);
 
@@ -57,6 +46,18 @@ function importDataFromMOH() {
       ss.deleteSheet(secondDate);
       console.log("Deleted data for " + todaysDate);
   }
+
+  console.log("Waiting for processing...");
+  SpreadsheetApp.flush();
+
+  var lastRow = newDayData.getLastRow();
+  var range = newDayData.getRange('Q1');
+  newDayData.setActiveRange(range);
+  range.setValue("Date");
+
+  range = newDayData.getRange('Q2:Q' + lastRow);
+  newDayData.setActiveRange(range);
+  range.setValue(todaysDate);
 }
 
 function test() {
