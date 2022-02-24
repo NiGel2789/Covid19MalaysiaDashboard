@@ -14,21 +14,34 @@ function importDataFromMOH() {
   firstCell.setFormula("=ImportData(" + mohLink + ")");
 
   console.log("Created sheet for " + todaysDate);
-
+  
   var sheets = ss.getSheets();
   var noOfDaysRecorded = sheets.length;
   var names = new Array();
   for (var i = 1 ; i < sheets.length ; i++) names.push([sheets[i].getName()]);
+
+    if (noOfDaysRecorded > 8)
+  {
+      var secondDate = new Date();
+      secondDate.setDate(date.getDate()-7);
+      secondDate = Utilities.formatDate(secondDate, "GMT+8", "MM/dd/yyyy");
+      var oldSheet = ss.getSheetByName(secondDate);
+      ss.deleteSheet(oldSheet);
+      console.log("Deleted data for " + secondDate);
+  }
+
+  console.log("Waiting for delete to complete processing...");
+  SpreadsheetApp.flush();
 
   var procSheet = ss.getSheetByName("Processed Data");
   ss.setActiveSheet(procSheet);
   firstCell = ss.getRange('A1');
   var select = '"select Col1, Col3, Col6, Col7, Col8, Col9, Col10, Col17 where Col7 = ' + "'active'";
   var query = "=QUERY({";
-  for (var j = 0; j < names.length; j++)
+  for (var j = 0; j < names.length-1; j++)
   {
     query = query + "'" + names[j] + "'!A:Q";
-    if (j < names.length-1)
+    if (j < names.length-2)
     {
       query = query + ";";
     }
@@ -37,15 +50,6 @@ function importDataFromMOH() {
   // Example: =QUERY({'02/20/2022'!A:Q;'02/21/2022'!A:Q},("select Col1, Col3, Col6, Col7, Col8, Col9, Col10, Col17 where Col7 = 'active'"))
 
   firstCell.setFormula(query);
-
-  if (noOfDaysRecorded > 8)
-  {
-      var secondDate = new Date();
-      secondDate.setDate(date.getDate()-7);
-      secondDate = Utilities.formatDate(secondDate, "GMT+8", "MM/dd/yyyy");
-      ss.deleteSheet(secondDate);
-      console.log("Deleted data for " + todaysDate);
-  }
 
   console.log("Waiting for processing...");
   SpreadsheetApp.flush();
