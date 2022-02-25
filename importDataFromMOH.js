@@ -9,9 +9,11 @@ function importDataFromMOH() {
   var newDayData = ss.insertSheet();
   newDayData.setName(todaysDate);
 
-  var firstCell = newDayData.getRange("A1"); // Please provide the row and column of your cell here 
-  var mohLink = '"https://raw.githubusercontent.com/MoH-Malaysia/covid19-public/main/epidemic/clusters.csv"';
-  firstCell.setFormula("=ImportData(" + mohLink + ")");
+  //var firstCell = newDayData.getRange("A1"); // Please provide the row and column of your cell here 
+  var mohLink = 'https://raw.githubusercontent.com/MoH-Malaysia/covid19-public/main/epidemic/clusters.csv';
+  var contents = Utilities.parseCsv(UrlFetchApp.fetch(mohLink));
+  newDayData.getRange(1, 1, contents.length, contents[0].length).setValues(contents);
+  //firstCell.setFormula("=ImportData(" + mohLink + ")");
 
   console.log("Created sheet for " + todaysDate);
   
@@ -64,10 +66,6 @@ function importDataFromMOH() {
   range.setValue(todaysDate);
 }
 
-function test() {
-  console.log('"select Col1, Col3, Col6, Col7, Col8, Col9, Col10, Col17 where Col7 = ' + "'active'");
-  var query = "=QUERY({";
-  var name = "02/21/2022";
-  query = query + "'" + name + "'!A:Q";
-  console.log(query);
+function main() {
+  importDataFromMOH();
 }
