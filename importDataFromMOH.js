@@ -25,7 +25,7 @@ function importDataFromMOH() {
     if (noOfDaysRecorded > 8)
   {
       var secondDate = new Date();
-      secondDate.setDate(date.getDate()-7);
+      secondDate.setDate(date.getDate()-8);
       secondDate = Utilities.formatDate(secondDate, "GMT+8", "MM/dd/yyyy");
       var oldSheet = ss.getSheetByName(secondDate);
       ss.deleteSheet(oldSheet);
