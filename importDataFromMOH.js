@@ -24,9 +24,9 @@ function importDataFromMOH() {
 
     if (noOfDaysRecorded > 8)
   {
-      var secondDate = new Date();
-      secondDate.setDate(date.getDate()-8);
-      secondDate = Utilities.formatDate(secondDate, "GMT+8", "MM/dd/yyyy");
+      var secondDate = names.pop();
+      //secondDate.setDate(date.getDate()-8);
+      //secondDate = Utilities.formatDate(secondDate, "GMT+8", "MM/dd/yyyy");
       var oldSheet = ss.getSheetByName(secondDate);
       ss.deleteSheet(oldSheet);
       console.log("Deleted data for " + secondDate);
@@ -35,7 +35,7 @@ function importDataFromMOH() {
   console.log("Waiting for delete to complete processing...");
   SpreadsheetApp.flush();
 
-  var procSheet = ss.getSheetByName("Processed Data");
+  var procSheet = ss.getSheetByName("ProcData");
   ss.setActiveSheet(procSheet);
   firstCell = ss.getRange('A1');
   var select = '"select Col1, Col3, Col6, Col7, Col8, Col9, Col10, Col17 where Col7 = ' + "'active'";
@@ -64,6 +64,19 @@ function importDataFromMOH() {
   range = newDayData.getRange('Q2:Q' + lastRow);
   newDayData.setActiveRange(range);
   range.setValue(todaysDate);
+
+  // Maintaining Latest Sheet
+
+  ss = SpreadsheetApp.openById("1akmpLCwtAh6dWIuGI95a1OAqYFY-MugGYQDsbMWNlJU");
+  SpreadsheetApp.setActiveSpreadsheet(ss);
+  
+  //=QUERY(IMPORTRANGE("https://docs.google.com/spreadsheets/d/1YoK969RWaTBLCTN5ViMm9dXV8zJTEiiWC3E8SjHiNts/edit", "02/27/2022!A:Q"), "select  
+  // Col1, Col3, Col6, Col7, Col8, Col9, Col10, Col17 where Col7 = 'active'")
+  var latestLink = '"https://docs.google.com/spreadsheets/d/1YoK969RWaTBLCTN5ViMm9dXV8zJTEiiWC3E8SjHiNts/edit"';
+  query = "=QUERY(IMPORTRANGE(" + latestLink + ", " + '"' + todaysDate + '!A:Q"), "select Col1, Col3, Col6, Col7, Col8, Col9, Col10, Col17 where Col7 = ' + "'active'" + '")';
+
+  firstCell = ss.getRange('A1');
+  firstCell.setFormula(query);
 }
 
 function main() {
